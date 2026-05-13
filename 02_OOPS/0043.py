@@ -1,63 +1,63 @@
 class Vector:
     """
-    Represents a mathematical vector — extremely useful in ML/AI work.
-    e.g. feature vectors, embeddings, gradient vectors
+    A 2D vector class — a practical example of operator overloading.
+    Used in physics simulations, ML feature spaces, game engines.
     """
 
-    def __init__(self, *components: float):
-        self.components = list(components)
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
 
-    # + operator: v1 + v2
+    # v1 + v2  →  calls __add__
     def __add__(self, other: "Vector") -> "Vector":
-        if len(self.components) != len(other.components):
-            raise ValueError("Vectors must have the same dimensions")
-        result = [a + b for a, b in zip(self.components, other.components)]
-        return Vector(*result)
+        return Vector(self.x + other.x, self.y + other.y)
 
-    # - operator: v1 - v2
+    # v1 - v2  →  calls __sub__
     def __sub__(self, other: "Vector") -> "Vector":
-        result = [a - b for a, b in zip(self.components, other.components)]
-        return Vector(*result)
+        return Vector(self.x - other.x, self.y - other.y)
 
-    # * operator: v * scalar  (scalar multiplication)
+    # v1 * 3  →  calls __mul__
     def __mul__(self, scalar: float) -> "Vector":
-        result = [x * scalar for x in self.components]
-        return Vector(*result)
+        return Vector(self.x * scalar, self.y * scalar)
 
-    # == operator: v1 == v2
+    # 3 * v1  →  calls __rmul__ (reversed multiplication)
+    def __rmul__(self, scalar: float) -> "Vector":
+        return self.__mul__(scalar)
+
+    # v1 == v2  →  calls __eq__
     def __eq__(self, other: "Vector") -> bool:
-        return self.components == other.components
+        return self.x == other.x and self.y == other.y
 
-    # len(): len(v)
+    # abs(v1)  →  calls __abs__  (magnitude of vector)
+    def __abs__(self) -> float:
+        return (self.x ** 2 + self.y ** 2) ** 0.5
+
+    # len(v1)  →  calls __len__
     def __len__(self) -> int:
-        return len(self.components)
+        return 2   # a 2D vector always has 2 components
 
-    # Magnitude (size) of the vector
-    def magnitude(self) -> float:
-        return sum(x ** 2 for x in self.components) ** 0.5
+    # bool(v1)  →  calls __bool__
+    def __bool__(self) -> bool:
+        return self.x != 0 or self.y != 0   # zero vector is falsy
 
-    # Dot product — critical for ML similarity calculations
-    def dot(self, other: "Vector") -> float:
-        return sum(a * b for a, b in zip(self.components, other.components))
-
-    def __repr__(self):
-        return f"Vector{tuple(self.components)}"
+    # print(v1)  →  calls __repr__
+    def __repr__(self) -> str:
+        return f"Vector({self.x}, {self.y})"
 
 
-# Feature vectors from an ML model
-embedding1 = Vector(0.8, 0.3, 0.5, 0.9)
-embedding2 = Vector(0.2, 0.7, 0.4, 0.1)
+v1 = Vector(3, 4)
+v2 = Vector(1, 2)
 
-print(embedding1 + embedding2)       # Vector(1.0, 1.0, 0.9, 1.0)
-print(embedding1 - embedding2)       # Vector(0.6, -0.4, 0.1, 0.8)
-print(embedding1 * 2)                # Vector(1.6, 0.6, 1.0, 1.8)
-print(embedding1 == embedding2)      # False
-print(len(embedding1))               # 4
-print(f"Magnitude: {embedding1.magnitude():.3f}")   # 1.355
-print(f"Dot product: {embedding1.dot(embedding2):.3f}")  # 0.68
+print(v1 + v2)      # Vector(4, 6)       — __add__
+print(v1 - v2)      # Vector(2, 2)       — __sub__
+print(v1 * 3)       # Vector(9, 12)      — __mul__
+print(3 * v1)       # Vector(9, 12)      — __rmul__
+print(v1 == v2)     # False              — __eq__
+print(abs(v1))      # 5.0                — __abs__ (3-4-5 triangle)
+print(len(v1))      # 2                  — __len__
+print(bool(v1))     # True               — __bool__
 
-# The + operator works the same way for integers, strings, and now Vectors
-# Same operator symbol — three completely different behaviours → Polymorphism
-print(1 + 2)           # 3        (integer addition)
-print("AI" + "Eng")    # AIEng    (string concatenation)
-print(embedding1 + embedding2)  # Vector addition
+# Works with Python built-ins naturally
+vectors = [Vector(1,1), Vector(3,4), Vector(0,2)]
+largest = max(vectors, key=abs)   # uses __abs__ for comparison
+print(f"Largest magnitude: {largest}")
