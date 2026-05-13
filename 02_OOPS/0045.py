@@ -1,6 +1,7 @@
 # Polymorphism vs Inheritance — critical distinction
 
 # Polymorphism THROUGH inheritance — most common
+from abc import ABC, abstractmethod
 class Shape(ABC):
     @abstractmethod
     def area(self): pass
